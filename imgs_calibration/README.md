@@ -15,4 +15,4 @@ Dual energy: 80 and 135 kV \
 Exposure of calibration: (SD of calibration rod keeps around 7 at 135kV, can be further increased to reduce noise) \
   i.	Small-sized Phantom: 10 mR \
   ii.	Medium-sized Phantom: 25 mR \
-  iii.	Large-sized Phantom: 54 mR \
+  iii.	Large-sized Phantom: 54 mR 
