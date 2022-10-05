@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.4
+# v0.19.12
 
 using Markdown
 using InteractiveUtils
@@ -15,6 +15,7 @@ macro bind(def, element)
 end
 
 # ╔═╡ c25c8d78-8fbb-4714-bd64-1d907e699d13
+# ╠═╡ show_logs = false
 begin
     let
         using Pkg
@@ -38,7 +39,24 @@ end
 TableOfContents()
 
 # ╔═╡ 9a5a408f-d6d8-445e-b6e8-7e3eb4636ab4
-densities = [1, 2, 3]
+densities = [
+	25
+	50
+	100
+	150
+	200
+	250
+	300
+	350
+	400
+	450
+	500
+	550
+	600
+	650
+	750
+	800
+]
 
 # ╔═╡ 8d3e474e-ce26-4a68-bc6b-046c221952c9
 energies = [80, 135]
@@ -54,11 +72,12 @@ begin
 
                 ## Path to the original dataset of .mat files
                 path = string(
-                    "/Users/xings/Google Drive/Research/dual energy/validation_originalsize(8.17)/Density",
+                    "/Users/daleblack/Google Drive/dev/MolloiLab/dual-energy-cac/imgs_calibration/",
+					_size,
+					"/",
                     density,
-                    "energy",
+                    "rod",
                     energy,
-                    _size,
                     ".mat"
                 )
                 vars1 = matread(path)
@@ -66,7 +85,7 @@ begin
                 array1 = Int16.(round.(array1))
 
                 ## Path to a known DICOM files
-                dcm_path = "/Users/xings/Google Drive/Research/Data/Canon_Aquilion_One_Vision/Large_rep1/96E1EB4F"
+                dcm_path = "/Users/daleblack/Google Drive/Datasets/Canon_Aquilion_One_Vision/Large_rep1/96E1EB4F"
 
                 dcm = dcm_parse(dcm_path)
                 dcm[tag"Pixel Data"] = array1
@@ -75,30 +94,22 @@ begin
                 dcm[tag"Columns"] = size(array1, 2)
 
                 ## Path to output the newly creted DICOM files
-                output_root1 = string(
-                    "/Users/xings/Google Drive/Research/dual energy/validation_originalsize_dcms"
-                )
+				output_root1 = string(dirname(dirname(dirname(path))), "/dcms_calibration/", _size)
+				
                 if !isdir(output_root1)
                     mkdir(output_root1)
                 end
                 output_root2 = string(
                     output_root1,
                     "/",
-                    _size,
+                    energy,
                 )
                 if !isdir(output_root2)
                     mkdir(output_root2)
                 end
-                output_root3 = string(
-                    output_root2,
-                    "/",
-                    energy,
-                )
-                if !isdir(output_root3)
-                    mkdir(output_root3)
-                end
 
-                output_path = string(output_root3, "/", density, ".dcm")
+				global output_path
+                output_path = string(output_root2, "/", density, ".dcm")
                 dcm_write(output_path, dcm)
             end
         end
@@ -110,11 +121,8 @@ md"""
 ## Check DICOM image(s)
 """
 
-# ╔═╡ 14d68ec9-1653-46e4-a7a1-6e3d92d0d6fd
-pth = "/Users/xings/Google Drive/Research/dual energy/validation_originalsize_dcms/large1/80"
-
 # ╔═╡ fc683127-d9fd-4f36-8c22-ba334fa2bc63
-dcmdir_combined = dcmdir_parse(pth);
+dcmdir_combined = dcmdir_parse(dirname(output_path));
 
 # ╔═╡ d75c3cdf-200e-491c-bb65-ece16cf16ca0
 vol_combined = load_dcm_array(dcmdir_combined);
@@ -133,8 +141,7 @@ heatmap(transpose(vol_combined[:, :, c]); colormap=:grays)
 # ╠═84031932-d692-4102-bb1f-970780e2aa1c
 # ╠═455e943d-a824-44e9-8453-164f853b8845
 # ╟─7efbcb1c-09dc-45d2-979e-86c005edd387
-# ╠═14d68ec9-1653-46e4-a7a1-6e3d92d0d6fd
 # ╠═fc683127-d9fd-4f36-8c22-ba334fa2bc63
 # ╠═d75c3cdf-200e-491c-bb65-ece16cf16ca0
-# ╠═fb34c978-bd0c-4b20-9c19-c25603fa8dc9
+# ╟─fb34c978-bd0c-4b20-9c19-c25603fa8dc9
 # ╠═a122aeef-9289-4bc7-908b-64a7734dcae8
