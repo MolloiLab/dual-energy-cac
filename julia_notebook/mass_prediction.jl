@@ -17,40 +17,18 @@ end
 # ╔═╡ db978680-24b3-11ed-338e-d18072c03678
 # ╠═╡ show_logs = false
 begin
-    let
-        using Pkg
-        Pkg.activate(mktempdir())
-        Pkg.Registry.update()
-        Pkg.add("PlutoUI")
-        Pkg.add("CairoMakie")
-        Pkg.add("Statistics")
-        Pkg.add("StatsBase")
-        Pkg.add("ImageMorphology")
-        # Pkg.add("ImageFiltering")
-        Pkg.add("CSV")
-        Pkg.add("DataFrames")
-        # Pkg.add("GLM")
-        Pkg.add(; url="https://github.com/JuliaHealth/DICOM.jl")
-        Pkg.add(; url="https://github.com/Dale-Black/DICOMUtils.jl")
-        # Pkg.add(; url="https://github.com/Dale-Black/PhantomSegmentation.jl")
-        # Pkg.add("ImageComponentAnalysis")
-        # Pkg.add("Tables")
-    end
+	using Pkg
+	Pkg.activate(".")
 
     using PlutoUI
     using CairoMakie
     using Statistics
     using StatsBase: quantile!
     using ImageMorphology
-    # using ImageFiltering
     using CSV
     using DataFrames
-    # using GLM
     using DICOM
     using DICOMUtils
-    # using PhantomSegmentation
-    # using ImageComponentAnalysis
-    # using Tables
 end
 
 # ╔═╡ 7f5a24e6-e9b0-4a72-a9fa-98ab01a20125
@@ -156,17 +134,20 @@ md"""
 # Calculate Intensities
 """
 
-# ╔═╡ 0a4fe231-8806-4a1b-a3e1-db79e1bb8dc5
-md"""
-## Low Energy
-"""
+# ╔═╡ 85849873-319b-49de-81a8-7d9949b2a093
+sizes_folders = ["Small", "Medium", "Large", "Small1", "Medium1", "Large1"]
+
+# ╔═╡ 8ae2a44d-8cbb-43a3-b586-4a9eb037713d
+densities = ["Density1", "Density2", "Density3"]
+
+# ╔═╡ 80a181a0-390b-493b-b15d-03fce1ac5dbd
+energies_num = [80, 135]
 
 # ╔═╡ fb440caa-f753-4b86-b6f2-fed47e31e94d
 begin
-	pth = string("/Users/daleblack/Google Drive/dev/MolloiLab/dual-energy-cac/dcms_measurement/", SIZE, "/", energies[1])
+	pth = joinpath("/Users/daleblack/Google Drive/dev/MolloiLab/dual-energy-cac/dcms_measurement_new/", sizes_folders[1], densities[1], string(energies_num[1]))
 	dcm = dcmdir_parse(pth)
 	dcm_array = load_dcm_array(dcm)
-
 end;
 
 # ╔═╡ 0f13a6fe-36a6-4139-83ce-48f456b4ce81
@@ -226,6 +207,11 @@ begin
     end
 end;
 
+# ╔═╡ 0a4fe231-8806-4a1b-a3e1-db79e1bb8dc5
+md"""
+## Low Energy
+"""
+
 # ╔═╡ ff366ede-a201-48da-9f59-638c9907ed72
 begin
 	pixel_size = DICOMUtils.get_pixel_size(dcm[1].meta)
@@ -247,13 +233,8 @@ overlay_mask_plot(dcm_array, dilate(dilate(dilate_mask_L_HD_3D)), v1, "masks ove
 
 # ╔═╡ 1a254747-0f14-4731-b014-2d59ff6a759b
 begin
-	mean_slice1 = [mean(dcm_array[:, :, 1][dilate_mask_L_HD_3D[:, :, 1]]), mean(dcm_array[:, :, 1][dilate_mask_M_HD_3D[:, :, 1]]), mean(dcm_array[:, :, 1][dilate_mask_S_HD_3D[:, :, 1]])]
-	
-	mean_slice2 = [mean(dcm_array[:, :, 2][dilate_mask_L_HD_3D[:, :, 2]]), mean(dcm_array[:, :, 2][dilate_mask_M_HD_3D[:, :, 2]]), mean(dcm_array[:, :, 2][dilate_mask_S_HD_3D[:, :, 2]])]
-
-	mean_slice3 = [mean(dcm_array[:, :, 3][dilate_mask_L_HD_3D[:, :, 3]]), mean(dcm_array[:, :, 3][dilate_mask_M_HD_3D[:, :, 2]]), mean(dcm_array[:, :, 3][dilate_mask_S_HD_3D[:, :, 3]])]
-
-	means1 = hcat(mean_slice1, mean_slice2, mean_slice3)
+	means1 = [mean(dcm_array[dilate_mask_L_HD_3D]), mean(dcm_array[dilate_mask_M_HD_3D]), mean(dcm_array[dilate_mask_S_HD_3D]),
+	mean(dcm_array[dilate_mask_L_MD_3D]), mean(dcm_array[dilate_mask_M_MD_3D]), mean(dcm_array[dilate_mask_S_MD_3D]), mean(dcm_array[dilate_mask_L_LD_3D]), mean(dcm_array[dilate_mask_M_LD_3D]), mean(dcm_array[dilate_mask_S_LD_3D])]
 end
 
 # ╔═╡ 10273dd0-a77f-4c43-be5a-a5696aa5688b
@@ -263,7 +244,7 @@ md"""
 
 # ╔═╡ 6f95f46a-bed8-4845-b7b1-d9340a7eea82
 begin
-	pth2 = string("/Users/daleblack/Google Drive/dev/MolloiLab/dual-energy-cac/dcms_measurement/", SIZE, "/", energies[2])
+	pth2 = joinpath("/Users/daleblack/Google Drive/dev/MolloiLab/dual-energy-cac/dcms_measurement_new/", sizes_folders[1], densities[1], string(energies_num[2]))
 	dcm2 = dcmdir_parse(pth2)
 	dcm_array2 = load_dcm_array(dcm2)
 
@@ -277,13 +258,8 @@ overlay_mask_plot(dcm_array2, dilate(dilate(masks_3D)), v2, "masks overlayed")
 
 # ╔═╡ 76490868-ac50-416b-a1f6-0c6a3206b4b5
 begin
-	mean2_slice1 = [mean(dcm_array2[:, :, 1][dilate_mask_L_HD_3D[:, :, 1]]), mean(dcm_array2[:, :, 1][dilate_mask_M_HD_3D[:, :, 1]]), mean(dcm_array2[:, :, 1][dilate_mask_S_HD_3D[:, :, 1]])]
-	
-	mean2_slice2 = [mean(dcm_array2[:, :, 2][dilate_mask_L_HD_3D[:, :, 2]]), mean(dcm_array2[:, :, 2][dilate_mask_M_HD_3D[:, :, 2]]), mean(dcm_array2[:, :, 2][dilate_mask_S_HD_3D[:, :, 2]])]
-
-	mean2_slice3 = [mean(dcm_array2[:, :, 3][dilate_mask_L_HD_3D[:, :, 3]]), mean(dcm_array2[:, :, 3][dilate_mask_M_HD_3D[:, :, 2]]), mean(dcm_array2[:, :, 3][dilate_mask_S_HD_3D[:, :, 3]])]
-
-	means2 = hcat(mean2_slice1, mean2_slice2, mean2_slice3)
+	means2 = [mean(dcm_array2[dilate_mask_L_HD_3D]), mean(dcm_array2[dilate_mask_M_HD_3D]), mean(dcm_array2[dilate_mask_S_HD_3D]),
+	mean(dcm_array2[dilate_mask_L_MD_3D]), mean(dcm_array2[dilate_mask_M_MD_3D]), mean(dcm_array2[dilate_mask_S_MD_3D]), mean(dcm_array2[dilate_mask_L_LD_3D]), mean(dcm_array2[dilate_mask_M_LD_3D]), mean(dcm_array2[dilate_mask_S_LD_3D])]
 end
 
 # ╔═╡ fab56fe8-4dcc-4e22-99d8-e1a0f8214537
@@ -299,11 +275,11 @@ function predict_concentration(x, y, p)
 end
 
 # ╔═╡ 065e98af-e61d-444b-bb61-f4d551b5d570
-calculated_intensities = cat(means1, means2, dims=3)
+calculated_intensities = hcat(means1, means2)
 
 # ╔═╡ ea38774f-f3db-459c-8b89-738dc8821595
 begin
-	predicted_densities = zeros(3, 3)
+	predicted_densities = zeros(9)
 	
 	for i in 1:9
 		predicted_densities[i] = predict_concentration(means1[i], means2[i], Array(small_param))
@@ -332,9 +308,7 @@ vol_small, vol_medium, vol_large = count(dilate_mask_S_HD_3D) * voxel_size, coun
 # ╔═╡ 87040875-8c97-4e60-aa4f-057a0732c9ca
 begin
 	vol_slice1 = [vol_large, vol_medium, vol_small]
-	vol_slice2 = [vol_large, vol_medium, vol_small]
-	vol_slice3 = [vol_large, vol_medium, vol_small] 
-	vols = hcat(vol_slice1, vol_slice2, vol_slice1) # cm^3
+	vols = vcat(vol_slice1, vol_slice1, vol_slice1)# cm^3
 end
 
 # ╔═╡ 3b0c241a-29bb-47e4-8993-fabbc6da0c1a
@@ -347,21 +321,21 @@ md"""
 
 # ╔═╡ 3dc4d4f9-15fe-4f59-a1c4-ed241fe68f77
 begin
-	calcium_densities_slice1 = [733, 669, 552] # high, medium, low densities
-	calcium_densities_slice2 = [411, 370, 222] # high, medium, low densities
-	calcium_densities_slice3 = [151, 90, 52] # high, medium, low densities
-
-	calcium_densities = hcat(calcium_densities_slice1, calcium_densities_slice2, calcium_densities_slice3)
+	calcium_densities = [733, 733, 733, 411, 411, 411, 151, 151, 151]
+	# calcium_densities = vcat(calcium_densities_slice1, calcium_densities_slice1, calcium_densities_slice1)
 end
 
 # ╔═╡ b8e54663-48f7-4f24-b7ec-b0c6b036ea85
 vol_small_gt, vol_medium_gt, vol_large_gt = π * (1/2)^2 * 3, π * (3/2)^2 * 3, π * (5/2)^2 * 3 # mm^3
 
 # ╔═╡ 0637bdd0-6afa-4ca9-83c9-615692fa375c
-vol2 = [vol_large_gt, vol_medium_gt, vol_small_gt] * 1e-3 # cm^3
+begin
+	vol2 = [vol_large_gt, vol_medium_gt, vol_small_gt] * 1e-3 
+	vols2 = vcat(vol2, vol2, vol2) # cm^3
+end
 
 # ╔═╡ 34288a18-57a9-4c0c-acfa-c47d5d1e0a22
-gt_masses = calcium_densities .* vol2 .* 3
+gt_masses = calcium_densities .* vols2 .* 3
 
 # ╔═╡ feaa710b-265d-4892-9f2e-3ae3a8246db0
 md"""
@@ -370,13 +344,13 @@ md"""
 
 # ╔═╡ 8a7416df-4149-46e1-8104-c35569657fce
 df_results = DataFrame(
-	densities = ["high density", "medium density", "low density"],
-	ground_truth_mass_slice1 = gt_masses[:, 1],
-	predicted_mass_slice1 = predicted_masses[:, 1],
-	ground_truth_mass_slice2 = gt_masses[:, 2],
-	predicted_mass_slice2 = predicted_masses[:, 2],
-	ground_truth_mass_slice3 = gt_masses[:, 3],
-	predicted_mass_slice3 = predicted_masses[:, 3],
+	insert_sizes = ["Large", "Medium", "Small"],
+	ground_truth_mass_hd = gt_masses[1:3],
+	predicted_mass_hd = predicted_masses[1:3],
+	ground_truth_mass_md = gt_masses[4:6],
+	predicted_mass_md = predicted_masses[4:6],
+	ground_truth_mass_ld = gt_masses[7:9],
+	predicted_mass_ld = predicted_masses[7:9],
 )
 
 # ╔═╡ Cell order:
@@ -391,9 +365,12 @@ df_results = DataFrame(
 # ╟─4807a059-3711-4839-96c6-a3f1ce8b3c7c
 # ╠═c268d8f1-706f-43d8-9d3d-dc4072666451
 # ╟─1d878c11-fca2-49e4-bd12-e645cc8bcb70
+# ╠═85849873-319b-49de-81a8-7d9949b2a093
+# ╠═8ae2a44d-8cbb-43a3-b586-4a9eb037713d
+# ╠═80a181a0-390b-493b-b15d-03fce1ac5dbd
+# ╠═fb440caa-f753-4b86-b6f2-fed47e31e94d
 # ╠═0f13a6fe-36a6-4139-83ce-48f456b4ce81
 # ╟─0a4fe231-8806-4a1b-a3e1-db79e1bb8dc5
-# ╠═fb440caa-f753-4b86-b6f2-fed47e31e94d
 # ╠═ff366ede-a201-48da-9f59-638c9907ed72
 # ╠═af62f7d2-8b32-40de-a789-99b112be3852
 # ╟─25f36ebb-0b26-4f27-b42a-3ee08afb9496

@@ -153,7 +153,7 @@ end;
 let
 	f = Figure()
 	ax = Makie.Axis(f[1, 1])
-	heatmap!(ax, dcm_array2[:, :, 1])
+	heatmap!(ax, dcm_array2[:, :, 1], colormap=:grays)
 	scatter!(ax, 
         center_insert1:center_insert1,
         center_insert2:center_insert2;
