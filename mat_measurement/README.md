@@ -21,19 +21,19 @@ QRM phantom
 | Large       | Density2       | 669                  | 370                    | 90                  |
 | Large       | Density3       | 552                  | 222                    | 52                  |
 | Large1      | Density1       | 797                  | 101                    | 37                  |
-| Large1      | Density2       | 403                  | 480                    | 32                  |
+| Large1      | Density2       | 403                  | 48                     | 32                  |
 | Large1      | Density3       | 199                  | 41                     | 27                  |
 | Medium      | Density1       | 733                  | 411                    | 151                 |
 | Medium      | Density2       | 669                  | 370                    | 90                  |
 | Medium      | Density3       | 552                  | 222                    | 52                  |
 | Medium1     | Density1       | 797                  | 101                    | 37                  |
-| Medium1     | Density2       | 403                  | 480                    | 32                  |
+| Medium1     | Density2       | 403                  | 48                     | 32                  |
 | Medium1     | Density3       | 199                  | 41                     | 27                  |
 | Small       | Density1       | 733                  | 411                    | 151                 |
 | Small       | Density2       | 669                  | 370                    | 90                  |
 | Small       | Density3       | 552                  | 222                    | 52                  |
 | Small1      | Density1       | 797                  | 101                    | 37                  |
-| Small1      | Density2       | 403                  | 480                    | 32                  |
+| Small1      | Density2       | 403                  | 48                     | 32                  |
 | Small1      | Density3       | 199                  | 41                     | 27                  |
 
 
