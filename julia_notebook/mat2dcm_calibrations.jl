@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.13
+# v0.19.18
 
 using Markdown
 using InteractiveUtils
@@ -64,7 +64,7 @@ begin
 
                 ## Path to the original dataset of .mat files
                 path = string(
-                    "/Users/daleblack/Google Drive/dev/MolloiLab/dual-energy-cac/mat_measurement/",
+                    "/Users/daleblack/Google Drive/dev/MolloiLab/dual-energy-cac/mat_calibrationa_bone_marrow/",
 					_size,
 					"/",
                     density,

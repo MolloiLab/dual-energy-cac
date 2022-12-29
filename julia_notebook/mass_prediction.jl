@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.13
+# v0.19.16
 
 using Markdown
 using InteractiveUtils
@@ -20,15 +20,8 @@ begin
 	using Pkg
 	Pkg.activate(".")
 
-    using PlutoUI
-    using CairoMakie
-    using Statistics
-    using StatsBase: quantile!
-    using ImageMorphology
-    using CSV
-    using DataFrames
-    using DICOM
-    using DICOMUtils
+    using PlutoUI, CairoMakie, Statistics, ImageMorphology, CSV, DataFrames, DICOM, DICOMUtils
+	using StatsBase: quantile!
 end
 
 # ╔═╡ 7f5a24e6-e9b0-4a72-a9fa-98ab01a20125
@@ -75,6 +68,18 @@ function overlay_mask_plot(array, mask, var, title::AbstractString)
     return fig
 end;
 
+# ╔═╡ 85849873-319b-49de-81a8-7d9949b2a093
+sizes_folders = ["Small", "Medium", "Large", "Small1", "Medium1", "Large1"]
+
+# ╔═╡ 76540649-bf00-41e5-9dcc-4620069cd1d7
+sizes = lowercase.(sizes_folders)
+
+# ╔═╡ 8ae2a44d-8cbb-43a3-b586-4a9eb037713d
+densities = ["Density1", "Density2", "Density3"]
+
+# ╔═╡ 80a181a0-390b-493b-b15d-03fce1ac5dbd
+energies_num = [80, 135]
+
 # ╔═╡ 818de283-2626-4afd-9465-ee065dfaff8d
 md"""
 # Load Segmentation Masks
@@ -82,13 +87,14 @@ md"""
 
 # ╔═╡ 013acd6e-0465-46c9-83b1-97613ebdee53
 begin
-	SIZE = "small";
+	
+	SIZE = "medium";
 	energies = ["80", "135"]
-	if (SIZE == "small1") || (SIZE == "small")
+	if (SIZE == sizes[1] || SIZE == sizes[4])
 		_SIZE = "small"
-	elseif (SIZE == "medium1") || (SIZE == "medium")
+	elseif (SIZE == sizes[2] || SIZE == sizes[5])
 		_SIZE = "medium"
-	else (SIZE == "large1") || (SIZE == "large")
+	elseif (SIZE == sizes[3] || SIZE == sizes[6])
 		_SIZE = "large"
 	end
 		
@@ -134,18 +140,9 @@ md"""
 # Calculate Intensities
 """
 
-# ╔═╡ 85849873-319b-49de-81a8-7d9949b2a093
-sizes_folders = ["Small", "Medium", "Large", "Small1", "Medium1", "Large1"]
-
-# ╔═╡ 8ae2a44d-8cbb-43a3-b586-4a9eb037713d
-densities = ["Density1", "Density2", "Density3"]
-
-# ╔═╡ 80a181a0-390b-493b-b15d-03fce1ac5dbd
-energies_num = [80, 135]
-
 # ╔═╡ fb440caa-f753-4b86-b6f2-fed47e31e94d
 begin
-	pth = joinpath("/Users/daleblack/Google Drive/dev/MolloiLab/dual-energy-cac/dcms_measurement_new/", sizes_folders[1], densities[1], string(energies_num[1]))
+	pth = joinpath("/Users/daleblack/Google Drive/dev/MolloiLab/dual-energy-cac/dcms_measurement_new/", sizes_folders[2], densities[1], string(energies_num[1]))
 	dcm = dcmdir_parse(pth)
 	dcm_array = load_dcm_array(dcm)
 end;
@@ -244,7 +241,7 @@ md"""
 
 # ╔═╡ 6f95f46a-bed8-4845-b7b1-d9340a7eea82
 begin
-	pth2 = joinpath("/Users/daleblack/Google Drive/dev/MolloiLab/dual-energy-cac/dcms_measurement_new/", sizes_folders[1], densities[1], string(energies_num[2]))
+	pth2 = joinpath("/Users/daleblack/Google Drive/dev/MolloiLab/dual-energy-cac/dcms_measurement_new/", sizes_folders[2], densities[1], string(energies_num[2]))
 	dcm2 = dcmdir_parse(pth2)
 	dcm_array2 = load_dcm_array(dcm2)
 
@@ -273,6 +270,15 @@ function predict_concentration(x, y, p)
 	B = 1 + (p[7] * x) + (p[8] * y)
 	F = A / B
 end
+
+# ╔═╡ deef95e0-a973-4c0f-8d6c-c112306567ba
+x = mean(dcm_array[dilate_mask_L_HD_3D])
+
+# ╔═╡ 68f34789-b1fe-458e-a584-46a9e4466b4c
+y = mean(dcm_array2[dilate_mask_L_HD_3D])
+
+# ╔═╡ adf21604-8031-4740-a82f-e57c04556bb0
+density = predict_concentration(x, y, Array(small_param)) # mg/mL
 
 # ╔═╡ 065e98af-e61d-444b-bb61-f4d551b5d570
 calculated_intensities = hcat(means1, means2)
@@ -359,15 +365,16 @@ df_results = DataFrame(
 # ╟─562b6c00-5470-4437-9e50-a75bf1ddd030
 # ╟─cf5b409e-2f02-4dec-afe4-3cf26dab0cd8
 # ╟─0358fdb5-f07e-4925-8fbf-8f7928565034
+# ╠═85849873-319b-49de-81a8-7d9949b2a093
+# ╠═76540649-bf00-41e5-9dcc-4620069cd1d7
+# ╠═8ae2a44d-8cbb-43a3-b586-4a9eb037713d
+# ╠═80a181a0-390b-493b-b15d-03fce1ac5dbd
 # ╟─818de283-2626-4afd-9465-ee065dfaff8d
 # ╠═013acd6e-0465-46c9-83b1-97613ebdee53
 # ╠═4526ec32-2491-41be-91c4-03f545f9733c
 # ╟─4807a059-3711-4839-96c6-a3f1ce8b3c7c
 # ╠═c268d8f1-706f-43d8-9d3d-dc4072666451
 # ╟─1d878c11-fca2-49e4-bd12-e645cc8bcb70
-# ╠═85849873-319b-49de-81a8-7d9949b2a093
-# ╠═8ae2a44d-8cbb-43a3-b586-4a9eb037713d
-# ╠═80a181a0-390b-493b-b15d-03fce1ac5dbd
 # ╠═fb440caa-f753-4b86-b6f2-fed47e31e94d
 # ╠═0f13a6fe-36a6-4139-83ce-48f456b4ce81
 # ╟─0a4fe231-8806-4a1b-a3e1-db79e1bb8dc5
@@ -383,6 +390,9 @@ df_results = DataFrame(
 # ╠═76490868-ac50-416b-a1f6-0c6a3206b4b5
 # ╟─fab56fe8-4dcc-4e22-99d8-e1a0f8214537
 # ╠═0a3974a9-097b-4568-a7f5-5a1ff2755092
+# ╠═deef95e0-a973-4c0f-8d6c-c112306567ba
+# ╠═68f34789-b1fe-458e-a584-46a9e4466b4c
+# ╠═adf21604-8031-4740-a82f-e57c04556bb0
 # ╠═065e98af-e61d-444b-bb61-f4d551b5d570
 # ╠═ea38774f-f3db-459c-8b89-738dc8821595
 # ╠═1ac7e2e1-2ff1-4db1-a2cc-99aef25694e3
