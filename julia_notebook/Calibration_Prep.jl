@@ -55,9 +55,6 @@ begin
 	dcm_array = load_dcm_array(dcm)
 end;
 
-# ╔═╡ 1e35d893-fa80-4350-967d-64732c4cb1ea
-dcm
-
 # ╔═╡ 77291dcf-b147-4f13-b932-8a83bec99aa7
 if SIZE == "small"
 	center_insert1, center_insert2 = 187, 318
@@ -309,7 +306,6 @@ CSV.write(path_csv, df_params)
 # ╟─02e01a44-9c7b-4881-9a2c-21125da82e9a
 # ╠═624f9db8-2fe9-4a11-b90f-402d397b3709
 # ╠═4666ed27-97bf-4096-a939-b8ab204697ab
-# ╠═1e35d893-fa80-4350-967d-64732c4cb1ea
 # ╠═77291dcf-b147-4f13-b932-8a83bec99aa7
 # ╟─407d0840-b80e-4d1e-b664-3f3798d66932
 # ╠═12b261eb-d092-4565-a761-de758796c60d
@@ -319,17 +315,17 @@ CSV.write(path_csv, df_params)
 # ╟─9fb33d34-e6f5-4956-b8b1-77ce838a335c
 # ╠═a2fb9d8b-2168-4a0d-bf37-64d8c7ed149c
 # ╠═589e889e-e3b7-4971-9cb9-37bbf8e9ee1b
-# ╠═40430578-a0e1-400d-bbd3-e7cc281cd0be
+# ╟─40430578-a0e1-400d-bbd3-e7cc281cd0be
 # ╠═715a1532-0ab2-4a99-b886-60ed488760a7
 # ╠═a5d5d874-6ea8-42b2-a691-de6881446a26
 # ╟─55038797-761f-453b-866f-e13f832b011c
 # ╠═a746d138-8031-4fb1-aef3-5d0e1d9f733c
 # ╠═dd8431bc-5036-4ca7-9cb3-a0b5093ced18
-# ╠═c525308b-c29c-4e46-b3a0-896374de8d40
+# ╟─c525308b-c29c-4e46-b3a0-896374de8d40
 # ╠═d8ebc18a-bf32-413d-8479-2722261a07a2
 # ╟─cb766fc2-7f17-409d-b06b-49f53b5fc765
 # ╠═8031567b-8177-47b9-855d-a687f35feeca
-# ╠═1882bb40-b9ed-4d02-9a61-fd9eae9fd5e8
+# ╟─1882bb40-b9ed-4d02-9a61-fd9eae9fd5e8
 # ╠═52855bed-17f3-4f7b-9714-937b3f93b434
 # ╠═d420ce86-f83b-4685-87f9-3904a4b98750
 # ╟─4667f340-4096-4b92-bac9-1bae5fecd953

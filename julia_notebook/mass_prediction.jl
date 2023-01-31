@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.16
+# v0.19.18
 
 using Markdown
 using InteractiveUtils
@@ -20,7 +20,7 @@ begin
 	using Pkg
 	Pkg.activate(".")
 
-    using PlutoUI, CairoMakie, Statistics, ImageMorphology, CSV, DataFrames, DICOM, DICOMUtils
+    using PlutoUI, CairoMakie, Statistics, ImageMorphology, CSV, DataFrames, DICOM, DICOMUtils, CalciumScoring
 	using StatsBase: quantile!
 end
 
@@ -135,6 +135,9 @@ begin
 	large_param = DataFrame(CSV.File(large_pth))
 end;
 
+# ╔═╡ a7be826f-97c1-4322-a1ad-644576d9a07a
+large_param
+
 # ╔═╡ 1d878c11-fca2-49e4-bd12-e645cc8bcb70
 md"""
 # Calculate Intensities
@@ -142,7 +145,7 @@ md"""
 
 # ╔═╡ fb440caa-f753-4b86-b6f2-fed47e31e94d
 begin
-	pth = joinpath("/Users/daleblack/Google Drive/dev/MolloiLab/dual-energy-cac/dcms_measurement_new/", sizes_folders[2], densities[1], string(energies_num[1]))
+	pth = joinpath(dirname(pwd()), "dcms_measurement_new", sizes_folders[2], densities[1], string(energies_num[1]))
 	dcm = dcmdir_parse(pth)
 	dcm_array = load_dcm_array(dcm)
 end;
@@ -241,7 +244,7 @@ md"""
 
 # ╔═╡ 6f95f46a-bed8-4845-b7b1-d9340a7eea82
 begin
-	pth2 = joinpath("/Users/daleblack/Google Drive/dev/MolloiLab/dual-energy-cac/dcms_measurement_new/", sizes_folders[2], densities[1], string(energies_num[2]))
+	pth2 = joinpath(dirname(pwd()), "dcms_measurement_new", sizes_folders[2], densities[1], string(energies_num[2]))
 	dcm2 = dcmdir_parse(pth2)
 	dcm_array2 = load_dcm_array(dcm2)
 
@@ -283,12 +286,15 @@ density = predict_concentration(x, y, Array(small_param)) # mg/mL
 # ╔═╡ 065e98af-e61d-444b-bb61-f4d551b5d570
 calculated_intensities = hcat(means1, means2)
 
+# ╔═╡ 62991bf5-ccbe-48e3-a1e0-314b3308d6b5
+
+
 # ╔═╡ ea38774f-f3db-459c-8b89-738dc8821595
 begin
 	predicted_densities = zeros(9)
 	
 	for i in 1:9
-		predicted_densities[i] = predict_concentration(means1[i], means2[i], Array(small_param))
+		predicted_densities[i] = score(means1[i], means2[i], Array(small_param), CalciumScoring.MaterialDecomposition())
 	end
 end
 
@@ -374,6 +380,7 @@ df_results = DataFrame(
 # ╠═4526ec32-2491-41be-91c4-03f545f9733c
 # ╟─4807a059-3711-4839-96c6-a3f1ce8b3c7c
 # ╠═c268d8f1-706f-43d8-9d3d-dc4072666451
+# ╠═a7be826f-97c1-4322-a1ad-644576d9a07a
 # ╟─1d878c11-fca2-49e4-bd12-e645cc8bcb70
 # ╠═fb440caa-f753-4b86-b6f2-fed47e31e94d
 # ╠═0f13a6fe-36a6-4139-83ce-48f456b4ce81
@@ -394,6 +401,7 @@ df_results = DataFrame(
 # ╠═68f34789-b1fe-458e-a584-46a9e4466b4c
 # ╠═adf21604-8031-4740-a82f-e57c04556bb0
 # ╠═065e98af-e61d-444b-bb61-f4d551b5d570
+# ╠═62991bf5-ccbe-48e3-a1e0-314b3308d6b5
 # ╠═ea38774f-f3db-459c-8b89-738dc8821595
 # ╠═1ac7e2e1-2ff1-4db1-a2cc-99aef25694e3
 # ╟─643432e9-efce-4cb2-a5d1-58b6cf0db565
