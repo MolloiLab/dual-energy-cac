@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.18
+# v0.19.22
 
 using Markdown
 using InteractiveUtils
@@ -54,30 +54,24 @@ densities = [
 energies = [80, 135]
 
 # ╔═╡ 84031932-d692-4102-bb1f-970780e2aa1c
-sizes = ["small", "medium", "large"]
+sizes = [["Small","30"],["Medium","35"],["Large","40"]]
 
 # ╔═╡ 455e943d-a824-44e9-8453-164f853b8845
 begin
     for energy in energies
         for _size in sizes
             for density in densities
+				
 
                 ## Path to the original dataset of .mat files
-                path = string(
-                    "/Users/daleblack/Google Drive/dev/MolloiLab/dual-energy-cac/mat_calibrationa_bone_marrow/",
-					_size,
-					"/",
-                    density,
-                    "rod",
-                    energy,
-                    ".mat"
-                )
+                path_root = joinpath(dirname(pwd()), "mat_calibration_bone_marrow", _size[1], string(density))
+				path = string(path_root, "rod",energy,"kV",_size[2],".mat")
                 vars1 = matread(path)
                 array1 = vars1[string("I")]
                 array1 = Int16.(round.(array1))
 
                 ## Path to a known DICOM files
-                dcm_path = "/Users/daleblack/Google Drive/Datasets/Canon_Aquilion_One_Vision/Large_rep1/96E1EB4F"
+				dcm_path = joinpath(dirname(pwd()),"sample.dcm")
 
                 dcm = dcm_parse(dcm_path)
                 dcm[tag"Pixel Data"] = array1

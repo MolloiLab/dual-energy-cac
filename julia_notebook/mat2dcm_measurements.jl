@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.13
+# v0.19.22
 
 using Markdown
 using InteractiveUtils
@@ -37,58 +37,122 @@ energies = [80, 135]
 densities = ["Density1", "Density2", "Density3"]
 
 # ╔═╡ 753bf413-2094-4642-8c13-26d70c8f99f8
-sizes_folders = ["Small", "Medium", "Large", "Small1", "Medium1", "Large1"]
+sizes_folders = ["Small", "Medium", "Large"]
+
+# ╔═╡ ef8cd6e6-2ec2-4f57-b85d-54b489139812
+sizes_folders1 = ["Small1","Medium1","Large1"]
 
 # ╔═╡ 98f46c6e-da8c-4b1d-817e-b3285452f210
 sizes = ["small", "medium", "large"]
 
-# ╔═╡ 13912914-7ab7-479b-a959-03576a9b117e
-file_nums = [1, 2, 3]
+# ╔═╡ 4eb56f0e-fbcf-40f4-befe-a5ae4a1c4a49
+file_nums = [1,2,3]
 
 # ╔═╡ 6e8c4d1a-08ad-4cf7-976c-e4b718951b53
 begin
+	##for files in SIZE ONLY
 	for size_folder in sizes_folders
 		for density in densities
     		for energy in energies
-        		for _size in sizes
-					for file_num in file_nums
-
-						local energy_folder_file_name
-						if (size_folder == "Small1" || size_folder == "Medium1" || size_folder == "Large1")
-							energy_folder_file_name = chop(lowercase(string(size_folder)))
-							# @info energy_folder_file_name
-						elseif (size_folder == "Small" || size_folder == "Medium" || size_folder == "Large")
-							energy_folder_file_name = lowercase(string(size_folder))
-						end
-						
-		                ## Path to the original dataset of .mat files
-						path = string("/Users/daleblack/Google Drive/dev/MolloiLab/dual-energy-cac/mat_measurement/", size_folder, "/", density, "energy", energy, energy_folder_file_name, ".mat")
-						vars1 = matread(path)
-						array1 = vars1[string("I")]
-						array1 = Int16.(round.(array1))
-						
-						## Path to known DICOM file
-						dcm_path = "/Users/daleblack/Google Drive/Datasets/Canon_Aquilion_One_Vision/Large_rep1/96E1EB4F"
-						
-						dcm = dcm_parse(dcm_path)
-						dcm[tag"Pixel Data"] = array1
-						dcm[tag"Instance Number"] = file_num
-						dcm[tag"Rows"] = size(array1, 1)
-						dcm[tag"Columns"] = size(array1, 2)
-		
-		                ## Path to output the newly creted DICOM files
-						output_root = joinpath("/Users/daleblack/Google Drive/dev/MolloiLab/dual-energy-cac/dcms_measurement_new", size_folder, density, string(energy))
-						if !isdir(output_root)
-							mkpath(output_root)
-						end
-						global output_path
-						output_path = joinpath(output_root, string(file_num) * ".dcm")
-						dcm_write(output_path, dcm)
+				for file_num in file_nums
+				
+					local file_size
+					if(size_folder == "Small")
+						file_size = "small"
+					elseif(size_folder == "Medium")
+						file_size = "medium"
+					else
+						file_size = "large"
 					end
+					
+					## Path to the original dataset of .mat files
+					path_root = string(joinpath(dirname(pwd()),"mat_measurement_bone_marrow/","SIZE/"),size_folder,"/",density,"energy",string(energy),file_size,".mat")
+					
+					vars1 = matread(path_root)
+					array1 = vars1[string("I")]
+					array1 = Int16.(round.(array1))
+					
+					## Path to known DICOM file
+					root = joinpath(dirname(pwd()))
+					dcm_file_name = "sample.dcm"
+					
+					dcm_path = joinpath(root,dcm_file_name)
+					
+					dcm = dcm_parse(dcm_path)
+					dcm[tag"Pixel Data"] = array1
+					dcm[tag"Instance Number"] = file_num
+					dcm[tag"Rows"] = size(array1, 1)
+					dcm[tag"Columns"] = size(array1, 2)
+	
+					## Path to output the newly creted DICOM files
+					output_root = joinpath(root,"dcms_measurement_new", size_folder, density, string(energy))
+					if !isdir(output_root)
+						mkpath(output_root)
+					end
+					global output_path
+					output_path = joinpath(output_root, string(file_num) * ".dcm")
+					dcm_write(output_path, dcm)
+						
 				end
 			end
         end
     end
+
+		##for files in SIZE1 ONLY
+	for size_folder1 in sizes_folders1
+		for density in densities
+    		for energy in energies
+				for file_num in file_nums
+				
+					local file_size
+					if(size_folder1 == "Small1")
+						file_size = "small"
+					elseif(size_folder1 == "Medium1")
+						file_size = "medium"
+					else
+						file_size = "large"
+					end
+					
+					## Path to the original dataset of .mat files
+					path_root = string(joinpath(dirname(pwd()),"mat_measurement_bone_marrow/","SIZE1/"),size_folder1,"/",density,"energy",string(energy),file_size,".mat")
+					
+					vars1 = matread(path_root)
+					array1 = vars1[string("I")]
+					array1 = Int16.(round.(array1))
+					
+					## Path to known DICOM file
+					root = joinpath(dirname(pwd()))
+					dcm_file_name = "sample.dcm"
+					
+					dcm_path = joinpath(root,dcm_file_name)
+					
+					dcm = dcm_parse(dcm_path)
+					dcm[tag"Pixel Data"] = array1
+					dcm[tag"Instance Number"] = file_num
+					dcm[tag"Rows"] = size(array1, 1)
+					dcm[tag"Columns"] = size(array1, 2)
+	
+					## Path to output the newly creted DICOM files
+					output_root = joinpath(root,"dcms_measurement_new", size_folder1, density, string(energy))
+					if !isdir(output_root)
+						mkpath(output_root)
+					end
+					global output_path
+					output_path = joinpath(output_root, string(file_num) * ".dcm")
+					dcm_write(output_path, dcm)
+						
+				end
+			end
+        end
+    end
+
+
+
+
+
+
+
+	
 end
 
 # ╔═╡ 40095bc7-a7a5-4455-9198-52a383e5434e
@@ -114,8 +178,9 @@ heatmap(transpose(vol_combined[:, :, c]); colormap=:grays)
 # ╠═ee37a9bf-545e-4c68-b22d-0c3fce8df0ba
 # ╠═03049b0b-9ac2-4d0e-b105-e36055cc6f42
 # ╠═753bf413-2094-4642-8c13-26d70c8f99f8
+# ╠═ef8cd6e6-2ec2-4f57-b85d-54b489139812
 # ╠═98f46c6e-da8c-4b1d-817e-b3285452f210
-# ╠═13912914-7ab7-479b-a959-03576a9b117e
+# ╠═4eb56f0e-fbcf-40f4-befe-a5ae4a1c4a49
 # ╠═6e8c4d1a-08ad-4cf7-976c-e4b718951b53
 # ╟─40095bc7-a7a5-4455-9198-52a383e5434e
 # ╠═36946509-a59e-4218-b501-cb9fc401fcc9

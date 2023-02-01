@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.18
+# v0.19.22
 
 using Markdown
 using InteractiveUtils
@@ -18,7 +18,7 @@ end
 # ╠═╡ show_logs = false
 begin
 	using Pkg
-	Pkg.activate(".")
+	Pkg.activate("."); Pkg.instantiate()
 
     using PlutoUI, CairoMakie, Statistics, ImageMorphology, CSV, DataFrames, DICOM, DICOMUtils, CalciumScoring
 	using StatsBase: quantile!
