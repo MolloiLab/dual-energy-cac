@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.18
+# v0.19.22
 
 using Markdown
 using InteractiveUtils
@@ -34,8 +34,8 @@ md"""
 
 # ╔═╡ 4cfef276-751a-4746-9b5b-7bf38bb24b79
 begin
-	SIZES = ["small", "medium", "large"]
-	SIZE = SIZES[3]
+	SIZES = ["Small", "Medium", "Large"]
+	SIZE = SIZES[1]
 end
 
 # ╔═╡ b9d34b46-5844-4830-ae59-eef44831b138
@@ -56,11 +56,11 @@ begin
 end;
 
 # ╔═╡ 77291dcf-b147-4f13-b932-8a83bec99aa7
-if SIZE == "small"
+if SIZE == "Small"
 	center_insert1, center_insert2 = 187, 318
-elseif SIZE == "medium"
+elseif SIZE == "Medium"
 	center_insert1, center_insert2 = 238, 365
-elseif SIZE == "large"
+elseif SIZE == "Large"
 	center_insert1, center_insert2 = 285, 415
 end
 
@@ -107,11 +107,11 @@ md"""
 """
 
 # ╔═╡ a2fb9d8b-2168-4a0d-bf37-64d8c7ed149c
-if SIZE == "small"
+if SIZE == "Small"
 	bkg_center_insert1 = 137, 318
-elseif SIZE == "medium"
+elseif SIZE == "Medium"
 	bkg_center_insert1 = 188, 365
-elseif SIZE == "large"
+elseif SIZE == "Large"
 	bkg_center_insert1 = 235, 415
 end
 

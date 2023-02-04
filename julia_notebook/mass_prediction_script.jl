@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.13
+# v0.19.22
 
 using Markdown
 using InteractiveUtils
@@ -74,10 +74,12 @@ end
 sizes_folders = ["Small", "Medium", "Large", "Small1", "Medium1", "Large1"]
 
 # ╔═╡ 2750bb98-c026-440c-9d89-ebf49dac1676
-sizes = lowercase.(sizes_folders)
+sizes = sizes_folders
 
 # ╔═╡ ba3b914d-758c-430d-8845-34f7b6c57f50
 densities = ["Density1", "Density2", "Density3"]
+
+#densities=["Density1"]
 
 # ╔═╡ fad04012-8c80-45b5-9b44-7f682f4a28ff
 energies = [80, 135]
@@ -100,9 +102,9 @@ md"""
 # ╔═╡ 565b608a-f6a8-4579-9efd-37522dc9cde5
 begin
 	param_base_pth = string(dirname(pwd()), "/calibration_params/")
-	small_pth = string(param_base_pth,"small.csv")
-	med_pth = string(param_base_pth,"medium.csv")
-	large_pth = string(param_base_pth,"large.csv")
+	small_pth = string(param_base_pth,"Small.csv")
+	med_pth = string(param_base_pth,"Medium.csv")
+	large_pth = string(param_base_pth,"Large.csv")
 
 	small_param = DataFrame(CSV.File(small_pth))
 	med_param = DataFrame(CSV.File(med_pth))
@@ -120,11 +122,12 @@ begin
 	for _size in sizes_folders 
 		for density in densities
 			@info _size, density
-			if (lowercase(_size) == sizes[1] || lowercase(_size) == sizes[4])
+			
+			if (_size == sizes[1] || _size == sizes[4])
 				_SIZE = "small"
-			elseif (lowercase(_size) == sizes[2] || lowercase(_size) == sizes[5])
+			elseif (_size == sizes[2] || _size == sizes[5])
 				_SIZE = "medium"
-			elseif (lowercase(_size) == sizes[3] || lowercase(_size) == sizes[6])
+			elseif (_size == sizes[3] || _size == sizes[6])
 				_SIZE = "large"
 			end
 				
@@ -140,7 +143,9 @@ begin
 			mask_S_LD = Array(CSV.read(string(root_new, "mask_S_LD.csv"), DataFrame; header=false))
 			masks = mask_L_HD+mask_L_MD+mask_L_LD+mask_M_HD+mask_M_MD+mask_M_LD+mask_S_HD+mask_S_MD+mask_S_LD;
 			
-			pth = joinpath("/Users/daleblack/Google Drive/dev/MolloiLab/dual-energy-cac/dcms_measurement_new/", _size, density, string(energies[1]))
+			pth = joinpath(dirname(pwd()),"dcms_measurement_new/", _size, density, string(energies[1]))
+
+			
 			dcm = dcmdir_parse(pth)
 			dcm_array = load_dcm_array(dcm)
 
@@ -207,7 +212,7 @@ begin
 			means1 = [mean(dcm_array[dilate_mask_L_HD_3D]), mean(dcm_array[dilate_mask_M_HD_3D]), mean(dcm_array[dilate_mask_S_HD_3D]), mean(dcm_array[dilate_mask_L_MD_3D]), mean(dcm_array[dilate_mask_M_MD_3D]), mean(dcm_array[dilate_mask_S_MD_3D]), mean(dcm_array[dilate_mask_L_LD_3D]), mean(dcm_array[dilate_mask_M_LD_3D]), mean(dcm_array[dilate_mask_S_LD_3D])]
 
 			## High Density
-			pth2 = joinpath("/Users/daleblack/Google Drive/dev/MolloiLab/dual-energy-cac/dcms_measurement_new/", _size, density, string(energies[2]))
+			pth2 = joinpath(dirname(pwd()),"dcms_measurement_new/", _size, density, string(energies[2]))
 			dcm2 = dcmdir_parse(pth2)
 			dcm_array2 = load_dcm_array(dcm2)
 
@@ -249,10 +254,11 @@ begin
 		
 			vol2 = [vol_large_gt, vol_medium_gt, vol_small_gt] * 1e-3 
 			vols2 = vcat(vol2, vol2, vol2) # cm^3
-			gt_masses = calcium_density .* vols2
+			gt_masses = calcium_density .* vols2 .* 3
 
 			df_results = DataFrame(
-				phantom_size = [_size, _size, _size],
+				phantom_size = _size,
+				density = density,
 				insert_sizes = ["Large", "Medium", "Small"],
 				ground_truth_mass_hd = gt_masses[1:3],
 				predicted_mass_hd = predicted_masses[1:3],

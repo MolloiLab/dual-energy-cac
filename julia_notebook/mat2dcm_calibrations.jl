@@ -80,7 +80,7 @@ begin
                 dcm[tag"Columns"] = size(array1, 2)
 
                 ## Path to output the newly creted DICOM files
-				output_root1 = string(dirname(dirname(dirname(path))), "/dcms_calibration/", _size)
+				output_root1 = string(dirname(dirname(dirname(path))), "/dcms_calibration/", _size[1])
 				
                 if !isdir(output_root1)
                     mkdir(output_root1)
@@ -97,6 +97,7 @@ begin
 				global output_path
                 output_path = string(output_root2, "/", density, ".dcm")
                 dcm_write(output_path, dcm)
+				@info output_path
             end
         end
     end

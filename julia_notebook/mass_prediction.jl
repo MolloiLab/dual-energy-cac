@@ -72,7 +72,7 @@ end;
 sizes_folders = ["Small", "Medium", "Large", "Small1", "Medium1", "Large1"]
 
 # ╔═╡ 76540649-bf00-41e5-9dcc-4620069cd1d7
-sizes = lowercase.(sizes_folders)
+sizes = sizes_folders
 
 # ╔═╡ 8ae2a44d-8cbb-43a3-b586-4a9eb037713d
 densities = ["Density1", "Density2", "Density3"]
@@ -85,10 +85,21 @@ md"""
 # Load Segmentation Masks
 """
 
+# ╔═╡ 4ec398d1-cc7e-4124-a351-fc1058d11cf6
+begin
+	size0 = sizes_folders[1]
+	density0 = densities[1]
+	energy0 = string(energies_num[1])
+	energy1 = string(energies_num[2])
+end
+
+# ╔═╡ 9ca73379-3456-404c-8893-b20be9ea6acf
+size0
+
 # ╔═╡ 013acd6e-0465-46c9-83b1-97613ebdee53
 begin
 	
-	SIZE = "medium";
+	SIZE = size0;
 	energies = ["80", "135"]
 	if (SIZE == sizes[1] || SIZE == sizes[4])
 		_SIZE = "small"
@@ -126,9 +137,9 @@ md"""
 # ╔═╡ c268d8f1-706f-43d8-9d3d-dc4072666451
 begin
 	param_base_pth = string(dirname(pwd()), "/calibration_params/")
-	small_pth = string(param_base_pth,"small.csv")
-	med_pth = string(param_base_pth,"medium.csv")
-	large_pth = string(param_base_pth,"large.csv")
+	small_pth = string(param_base_pth,"Small.csv")
+	med_pth = string(param_base_pth,"Medium.csv")
+	large_pth = string(param_base_pth,"Large.csv")
 
 	small_param = DataFrame(CSV.File(small_pth))
 	med_param = DataFrame(CSV.File(med_pth))
@@ -145,7 +156,7 @@ md"""
 
 # ╔═╡ fb440caa-f753-4b86-b6f2-fed47e31e94d
 begin
-	pth = joinpath(dirname(pwd()), "dcms_measurement_new", sizes_folders[2], densities[1], string(energies_num[1]))
+	pth = joinpath(dirname(pwd()), "dcms_measurement_new", size0, density0, energy0)
 	dcm = dcmdir_parse(pth)
 	dcm_array = load_dcm_array(dcm)
 end;
@@ -244,7 +255,7 @@ md"""
 
 # ╔═╡ 6f95f46a-bed8-4845-b7b1-d9340a7eea82
 begin
-	pth2 = joinpath(dirname(pwd()), "dcms_measurement_new", sizes_folders[2], densities[1], string(energies_num[2]))
+	pth2 = joinpath(dirname(pwd()), "dcms_measurement_new", size0, density0, energy1)
 	dcm2 = dcmdir_parse(pth2)
 	dcm_array2 = load_dcm_array(dcm2)
 
@@ -254,7 +265,7 @@ end;
 @bind v2 overlay_mask_bind(masks_3D)
 
 # ╔═╡ 05e8bfc9-22a6-4299-848b-02e02486a2de
-overlay_mask_plot(dcm_array2, dilate(dilate(masks_3D)), v2, "masks overlayed")
+overlay_mask_plot(dcm_array2, dilate(dilate(dilate_mask_L_HD_3D)), v2, "masks overlayed")
 
 # ╔═╡ 76490868-ac50-416b-a1f6-0c6a3206b4b5
 begin
@@ -376,6 +387,8 @@ df_results = DataFrame(
 # ╠═8ae2a44d-8cbb-43a3-b586-4a9eb037713d
 # ╠═80a181a0-390b-493b-b15d-03fce1ac5dbd
 # ╟─818de283-2626-4afd-9465-ee065dfaff8d
+# ╠═4ec398d1-cc7e-4124-a351-fc1058d11cf6
+# ╠═9ca73379-3456-404c-8893-b20be9ea6acf
 # ╠═013acd6e-0465-46c9-83b1-97613ebdee53
 # ╠═4526ec32-2491-41be-91c4-03f545f9733c
 # ╟─4807a059-3711-4839-96c6-a3f1ce8b3c7c
@@ -393,7 +406,7 @@ df_results = DataFrame(
 # ╟─10273dd0-a77f-4c43-be5a-a5696aa5688b
 # ╠═6f95f46a-bed8-4845-b7b1-d9340a7eea82
 # ╟─bb55626b-93a1-47d4-9cbe-f80d064ea5f9
-# ╟─05e8bfc9-22a6-4299-848b-02e02486a2de
+# ╠═05e8bfc9-22a6-4299-848b-02e02486a2de
 # ╠═76490868-ac50-416b-a1f6-0c6a3206b4b5
 # ╟─fab56fe8-4dcc-4e22-99d8-e1a0f8214537
 # ╠═0a3974a9-097b-4568-a7f5-5a1ff2755092
